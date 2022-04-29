@@ -2,15 +2,16 @@
 
 ## 비교 연산자
 
-| --- | --- | --- |
-| > | greater than | 5 > 1 true |
-| < | less than | 1 < 5 true |
-| >= | greater than or equal to | 18 >= 18 true |
-| <= | less than equal to | 18 <= 18 true |
-| == | equality | 20 == 20 true |
-| != | not equal | 10 != 20 true |
-| === | strict equality | --- |
-| !== | strict not equality | --- |
+| 기호 | 이름                     | 예시          |
+| ---- | ------------------------ | ------------- |
+| >    | greater than             | 5 > 1 true    |
+| <    | less than                | 1 < 5 true    |
+| >=   | greater than or equal to | 18 >= 18 true |
+| <=   | less than equal to       | 18 <= 18 true |
+| ==   | equality                 | 20 == 20 true |
+| !=   | not equal                | 10 != 20 true |
+| ===  | strict equality          | ---           |
+| !==  | strict not equality      | ---           |
 
 - 비교연산자는 숫자뿐만 아니라 문자열도 비교가 가능하다.
 - 유니코드에 정리되어 있는 숫자 코드를 이용하면 문자열도 대소비교가 가능하다.
