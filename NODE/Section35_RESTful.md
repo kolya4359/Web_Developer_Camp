@@ -193,3 +193,36 @@ PATCH /comments/:id - Update one comment
 DELETE /comments/:id - Destroy one comment
 // id로 조회한 한 개의 댓글 삭제
 ```
+
+## res.redirect()
+
+post 요청 시, 리다이렉션을 하지 않고 무언가를 출력하게 되면 get으로 페이지를 요청한 곳으로 돌아가지 않고, 출력한 것만 페이지에 뜨게 된다.  
+ex. get(/comments/new)로 댓글 입력창을 렌더링 하고 정보를 입력한 후 post요청으로 정보를 보냈을 때, post요청의 코드에 res.render('IT WORKED!!') 코드가 있을 경우, 화면에 IT WORKED!! 가 출력되고, /comments 화면으로 넘어가지 않는다. 이럴 경우 res.render()로 출력하지 않고, res.redirect() 메서드를 사용해서 get요청인 /comments로 넘어갈 수 있다.  
+redirect([status], path) : 웹페이지 경로를 강제로 이동시키는 메소드이다.  
+첫 번째 인수는 기본값으로 웹 코드넘버인 302를 갖는다. 웹 코드넘버가 302인 경우 두 번째 인수에 있는 경로로 강제로 이동시키는 것이다.
+
+## Slug
+
+Slug는 사람이 읽을 수 있는 고유 식별자로, ID와 같이 사람이 읽기 어려운 식별자 대신 리소스를 식별하는 데 사용된다. 항목을 한 눈에 볼 수 있는 기능을 유지하면서 항목을 참조하려는 경우 슬러그를 사용한다.
+
+## uuid 라이브러리
+
+Universally Unique IDentifier의 약자로, 전세계에 하나밖에 없는 ID라는 뜻이다. 이런 ID는 고유하기 때문에 서버에서 사용자들에 UUID를 붙여서 구분하는 등 여러 방면에서 유용하게 쓰일 수 있다.
+
+## PUT 과 PATCH 의 창
+
+두 가지 요청 모두 수정에 관련된 요청이지만, PUT 요청은 전부를 수정하는 요청이고, PATCH는 부분적으로 수정할 수 있는 요청이다.
+
+## Method-Override
+
+Express docs는 method-override라는 패키지로 연결해주는데 그 역할은 브라우저 폼처럼 클라이언트가 해당 작업을 지원하지 않는 환경에서 Put, Delete 등의 HTTP 동사를 쓰도록 해준다.  
+여러 가지 사용 방법이 있지만, 우리가 사용하는 방법은 쿼리 값을 이용하는 방법이다.  
+또 다른 옵션은 HTTP 헤더를 요청에 전달해서 이걸 삭제해야 한다고 지정을 해 주는 것이다. Post요청이긴 하지만 헤더에 '이 요청은 Delete나 Patch, Put 요청으로 취급해' 라고 말할 수 있다. 그럼 Express에서 Delete 라우트와 매칭이 된다.
+
+```js
+// Example call with query override using HTML <form>:
+<form method="POST" action="/resource?_method=DELETE">
+  <button type="submit">Delete resource</button>
+</form>
+// Post 요청이지만, Express는 Delete 요청으로 취급한다.
+```
