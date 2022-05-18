@@ -95,3 +95,4 @@ Mongoose의 삭제도 Mongo의 삭제와 같다. 하지만 deleteOne()이나 del
 Schema를 생성할 때 required 라는 특성을 추가할 수 있다.  
 required: true 로 설정하면 모델을 생성할 때 해당 키-값은 반드시 입력되어야 한다. 비어 있는 경우 에러가 나온다.  
 name: String으로 지정하고 숫자를 입력해도 에러가 나온다.
+Schema에 설정하지 않은 color: red 라는 특성을 추가해도 데이터베이스에 저장되지 않는다. Schema에 없는 특성은 무시된다.
