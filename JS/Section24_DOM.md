@@ -1,5 +1,7 @@
 # DOM이란?
 
+### (연습 : 24_Pokemon)
+
 ## DOM의 개요
 
 DOM은 문서 객체 모델(Document Object Model)을 말한다.  

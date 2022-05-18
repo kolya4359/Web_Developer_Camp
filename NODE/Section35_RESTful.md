@@ -1,8 +1,8 @@
 # Section35 : RESTful라우트 정의하기
 
-## GET 요청과 POST 요청
+### (예제 : 35_RESTful)
 
-### (예제 : 35_RESTful/getpost.html)
+## GET 요청과 POST 요청
 
 GET 요청은 대부분 정보를 가져올 때 사용한다.
 
@@ -17,8 +17,6 @@ POST 요청은 정보를 올리거나 보낼 때 사용한다.
 - 입력한 데이터는 쿼리 문자열로 들어가지 않고 요청의 페이로드 역할을 한다.
 
 ## 요청 구문 분석하기
-
-### (예제 : 35_RESTful/index.js)
 
 request body에서 데이터를 추출하거나 조작하는 법을 알아보자.  
 데이터가 폼이나 Postman을 통해 전송될 때 request body 및 Express에 들어갈 수 있는 데이터를 갖는다.  
