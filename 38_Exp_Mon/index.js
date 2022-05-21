@@ -21,8 +21,9 @@ mongoose
     console.log(err);
   });
 
-// 화면에 렌더링하는 뷰 폴더를 views 폴더로 지정하고, ejs 템플릿을 사용.
+// 화면에 렌더링하는 뷰 폴더를 views 폴더로 지정한다.
 app.set("views", path.join(__dirname, "views"));
+// 렌더링하는 페이지의 형식을 ejs로 한다.
 app.set("view engine", "ejs");
 
 app.use(express.urlencoded({ extended: true }));
