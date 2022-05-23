@@ -1,6 +1,7 @@
 const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
+const ejsMate = require("ejs-mate");
 const methodOverride = require("method-override");
 
 const Campground = require("./models/campground");
@@ -18,6 +19,9 @@ db.once("open", () => {
 
 const app = express();
 
+app.engine("ejs", ejsMate);
+// ejs파일을 실행하거나 파싱할 때 쓰이는 엔진은 여러가지가 있는데
+// Express가 사용하는 디폴트 엔진 대신 사용하라고 정해줘야 한다.
 app.set("view engine", "ejs");
 app.set("views", path.join(__dirname, "views"));
 
