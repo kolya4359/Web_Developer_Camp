@@ -3,13 +3,20 @@ const path = require("path");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
 const Joi = require("joi");
+const methodOverride = require("method-override");
+const session = require("express-session");
+const flash = require("connect-flash");
+
 const { campgroundSchema, reviewSchema } = require("./schemas.js");
+
 const catchAsync = require("./utils/catchAsync");
 const ExpressError = require("./utils/ExpressError");
-const methodOverride = require("method-override");
 
 const Campground = require("./models/campground");
 const Review = require("./models/review");
+
+const campgrounds = require("./routes/campgrounds");
+const reviews = require("./routes/reviews");
 
 mongoose.connect("mongodb://localhost:27017/yelp-camp", {
   useNewUrlParser: true,
@@ -32,124 +39,40 @@ app.set("views", path.join(__dirname, "views"));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride("_method"));
-
-const validateCampground = (req, res, next) => {
-  // Joi 패키지를 사용하여 Mongoose로 저장하기 전에 데이터 유효성 검사를 실행한다.
-  // Joi 패키지로 작성한 유효성 검사는 schemas.js로 옮겼다.
-  const { error } = campgroundSchema.validate(req.body);
-  if (error) {
-    const msg = error.details.map((el) => el.message).join(",");
-    throw new ExpressError(msg, 400);
-  } else {
-    next();
-  }
+app.use(express.static(path.join(__dirname, "public")));
+// express의 정적파일을 사용할 때 public 폴더에 있는 것을 사용하겠다는 의미.
+const sessionConfig = {
+  secret: "thisshouldbeabettersecret!",
+  resave: false,
+  saveUninitialized: true,
+  cookie: {
+    httpOnly: true,
+    expires: Date.now() + 1000 * 60 * 60 * 24 * 7, // 만료 기간
+    maxAge: 1000 * 60 * 60 * 24 * 7,
+  },
 };
+// 생성되지 않은 config 객체를 전달하기 위해 sessionConfig 를 만든다.
+app.use(session(sessionConfig));
+app.use(flash());
 
-const validateReview = (req, res, next) => {
-  const { error } = reviewSchema.validate(req.body);
-  if (error) {
-    const msg = error.datails.map((el) => el.message).join(".");
-    throw new ExpressError(msg, 400);
-  } else {
-    next();
-  }
-};
+app.use((req, res, next) => {
+  res.locals.success = req.flash("success");
+  // 항상 success인 키에 접근하도록 했다.
+  res.locals.error = req.flash("error");
+  // 플래시에 error인 키를 이용해 심각한 오류가 생겼거나
+  // 오류에 응답하는 플래시 메시지를 띄울 때 플래시를 사용할 수 있다.
+  next();
+});
+// 템플릿에 값을 전달하지 않도록 미들웨어로 만들었다.
+
+app.use("/campgrounds", campgrounds);
+app.use("campgrounds/:id/reviews", reviews);
 
 app.get("/", (req, res) => {
   res.render("home");
 });
 
-app.get(
-  "/campgrounds",
-  catchAsync(async (req, res) => {
-    const campgrounds = await Campground.find({});
-    res.render("campgrounds/index", { campgrounds });
-  })
-);
-
-app.get("/campgrounds/new", (req, res) => {
-  res.render("campgrounds/new");
-});
-
-app.post(
-  "/campgrounds",
-  validateCampground,
-  catchAsync(async (req, res) => {
-    // if (!req.body.campground)
-    //   throw new ExpressError("Invalid Campground Data", 400);
-    const campground = new Campground(req.body.campground);
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-  })
-);
-
-app.get(
-  "/campgrounds/:id",
-  catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id).populate(
-      "reviews"
-    );
-    res.render("campgrounds/show", { campground });
-  })
-);
-
-app.get(
-  "/campgrounds/:id/edit",
-  catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
-    res.render("campgrounds/edit", { campground });
-  })
-);
-
-app.put(
-  "/campgrounds/:id",
-  validateCampground,
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    const campground = await Campground.findByIdAndUpdate(id, {
-      ...req.body.campground,
-    });
-    res.redirect(`/campgrounds/${campground._id}`);
-  })
-);
-
-app.delete(
-  "/campgrounds/:id",
-  catchAsync(async (req, res) => {
-    const { id } = req.params;
-    await Campground.findByIdAndDelete(id);
-    res.redirect("/campgrounds");
-  })
-);
-
-app.post(
-  "/campgrounds/:id/reviews",
-  validateReview,
-  catchAsync(async (req, res) => {
-    const campground = await Campground.findById(req.params.id);
-    const review = new Review(req.body.review);
-    campground.reviews.push(review);
-    await review.save();
-    await campground.save();
-    res.redirect(`/campgrounds/${campground._id}`);
-  })
-);
-
-app.delete(
-  "/campgrounds/:id/reviews/:reviewId",
-  catchAsync(async (req, res) => {
-    const { id, reviewId } = req.params;
-    await Campground.findByIdAndUpdate(id, { $pull: { reviews: reviewId } });
-    // 첫 번째 id는 캠핑장 ID를 찾는 id이다.
-    // 두 번째 객체에서 $pull은 Mongo에서 사용하는 배열 수정 연산자이다.
-    // 배열에 있는 모든 인스턴스 중에 특정 조건에 만족하는 값을 지운다.
-    // 리뷰 배열에서 리뷰 ID를 찾아 지운다는 뜻이다.
-    await Review.findByIdAndDelete(reviewId);
-    res.redirect(`/campgrounds/${id}`);
-  })
-);
-
-app.all("/*", (req, res, next) => {
+app.all("*", (req, res, next) => {
   next(new ExpressError("Page Not Found", 404));
 });
 
