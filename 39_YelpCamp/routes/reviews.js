@@ -5,13 +5,13 @@ const router = express.Router({ mergeParams: true });
 // 파일을 따로 분리할 때 각 라우트의 직접 params의 id를 받거나
 // mergeParams를 true로 설정해주어야 params의 id에 접근할 수 있다.
 
-const { reviewSchema } = require("../schemas.js");
-
 const Campground = require("../models/campground");
 const Review = require("../models/review");
 
-const catchAsync = require("../utils/catchAsync");
+const { reviewSchema } = require("../schemas.js");
+
 const ExpressError = require("../utils/ExpressError");
+const catchAsync = require("../utils/catchAsync");
 
 const validateReview = (req, res, next) => {
   const { error } = reviewSchema.validate(req.body);
@@ -47,7 +47,7 @@ router.delete(
     // 배열에 있는 모든 인스턴스 중에 특정 조건에 만족하는 값을 지운다.
     // 리뷰 배열에서 리뷰 ID를 찾아 지운다는 뜻이다.
     await Review.findByIdAndDelete(reviewId);
-    res.flash("success", "Successfully deleted review");
+    req.flash("success", "Successfully deleted review");
     res.redirect(`/campgrounds/${id}`);
   })
 );

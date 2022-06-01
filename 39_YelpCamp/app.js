@@ -2,18 +2,10 @@ const express = require("express");
 const path = require("path");
 const mongoose = require("mongoose");
 const ejsMate = require("ejs-mate");
-const Joi = require("joi");
-const methodOverride = require("method-override");
 const session = require("express-session");
 const flash = require("connect-flash");
-
-const { campgroundSchema, reviewSchema } = require("./schemas.js");
-
-const catchAsync = require("./utils/catchAsync");
 const ExpressError = require("./utils/ExpressError");
-
-const Campground = require("./models/campground");
-const Review = require("./models/review");
+const methodOverride = require("method-override");
 
 const campgrounds = require("./routes/campgrounds");
 const reviews = require("./routes/reviews");
@@ -66,7 +58,7 @@ app.use((req, res, next) => {
 // 템플릿에 값을 전달하지 않도록 미들웨어로 만들었다.
 
 app.use("/campgrounds", campgrounds);
-app.use("campgrounds/:id/reviews", reviews);
+app.use("/campgrounds/:id/reviews", reviews);
 
 app.get("/", (req, res) => {
   res.render("home");
