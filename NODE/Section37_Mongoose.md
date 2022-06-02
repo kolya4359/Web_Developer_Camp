@@ -243,3 +243,11 @@ tourSchema.virtual("durationWeeks").get(function () {
 ```
 
 ## Mongoose를 미들웨어로 정의하기
+
+## mongosse 명령어
+
+- mongo : mongo shell 창으로 전환.
+- show dbs : mongoDB에 있는 DB들을 보여줌.
+- use [DB이름] : 해당 DB를 실행.
+- show collections : DB가 가지고 있는 collection을 보여줌.
+- db.[collection이름].find() : 해당 컬렉션의 들어있는 객체들을 보여줌.
