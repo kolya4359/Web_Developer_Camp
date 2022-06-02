@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.statics.findAndValidate = async function (username, password) {
-  const findUser = this.findOne({ username });
+  const findUser = await this.findOne({ username });
   // this는 특정 모델이나 스키마를 나타낸다. 여기선 User이다.
   const isValid = await bcrypt.compare(password, findUser.password);
   return isValid ? findUser : false;
