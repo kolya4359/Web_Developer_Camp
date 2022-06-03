@@ -18,13 +18,13 @@ router.post(
       // 새로운 사용자에 대해 암호를 해시하고 솔트를 저장하고 결과를 해시한다.
       req.login(registeredUser, (err) => {
         if (err) return next(err);
+        // login() 메서드는 콜백이 필요하므로 await 키워드를 사용할 수 없다.
+        req.flash("success", "Welcome to Yelp Camp!");
+        res.redirect("/campgrounds");
       });
-      // login() 메서드는 콜백이 필요하므로 await 키워드를 사용할 수 없다.
-      req.flash("success", "Welcome to Yelp Camp!");
-      res.redirect("/campgrounds");
     } catch (e) {
       req.flash("error", e.message);
-      res.redirect("/campgrounds");
+      res.redirect("register");
     }
   })
 );
