@@ -1,11 +1,11 @@
 const express = require("express");
 const router = express.Router();
-
-const Campground = require("../models/campground");
-const { campgroundSchema } = require("../schemas.js");
-
 const catchAsync = require("../utils/catchAsync");
+const { campgroundSchema } = require("../schemas.js");
+const { isLoggedIn } = require("../middleware.js");
+
 const ExpressError = require("../utils/ExpressError");
+const Campground = require("../models/campground");
 
 const validateCampground = (req, res, next) => {
   // Joi 패키지를 사용하여 Mongoose로 저장하기 전에 데이터 유효성 검사를 실행한다.
@@ -27,12 +27,13 @@ router.get(
   })
 );
 
-router.get("/new", (req, res) => {
+router.get("/new", isLoggedIn, (req, res) => {
   res.render("campgrounds/new");
 });
 
 router.post(
   "/",
+  isLoggedIn,
   validateCampground,
   catchAsync(async (req, res) => {
     // if (!req.body.campground)
@@ -60,6 +61,7 @@ router.get(
 
 router.get(
   "/:id/edit",
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const campground = await Campground.findById(req.params.id);
     if (!campground) {
@@ -72,6 +74,7 @@ router.get(
 
 router.put(
   "/:id",
+  isLoggedIn,
   validateCampground,
   catchAsync(async (req, res) => {
     const { id } = req.params;
@@ -85,6 +88,7 @@ router.put(
 
 router.delete(
   "/:id",
+  isLoggedIn,
   catchAsync(async (req, res) => {
     const { id } = req.params;
     await Campground.findByIdAndDelete(id);
